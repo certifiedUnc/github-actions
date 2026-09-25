@@ -20,4 +20,4 @@ def divide(left: float, right: float) -> float:
 
 
 if __name__ == "__main__":
-    print(f"2 + 3 = {add(2, 3)} change 2")
+    print(f"2 + 3 = {add(2, 3)} change 3")
