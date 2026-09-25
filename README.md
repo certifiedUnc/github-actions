@@ -10,6 +10,25 @@ This repository is a practical tutorial for learning GitHub Actions. It starts w
 - automate issue triage with `GITHUB_TOKEN`
 - understand migration from other CI/CD tools
 
+
+## Repository
+
+GitHub repository for this tutorial:
+
+```text
+https://github.com/certifiedUnc/github-actions
+```
+
+This local folder is configured to use that repository as `origin`. If you need to set it again, run:
+
+```bash
+git remote set-url origin https://github.com/certifiedUnc/github-actions.git
+git branch -M main
+git push -u origin main
+```
+
+For a brand-new folder with no `origin` remote yet, use `git remote add origin https://github.com/certifiedUnc/github-actions.git` instead.
+
 ## Project Files
 
 ```text
@@ -155,7 +174,7 @@ permissions:
   id-token: write
 ```
 
-For a real project, you must also configure the project on PyPI to trust this GitHub repository.
+For this repository, configure PyPI trusted publishing for `certifiedUnc/github-actions` before expecting the publish step to succeed.
 
 ## 7. Issue Automation
 
