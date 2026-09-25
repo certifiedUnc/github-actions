@@ -1,0 +1,47 @@
+name: Issue Automation
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  triage:
+    name: Add labels and welcome comment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ensure tutorial labels exist
+        run: |
+          gh label create bug --color d73a4a --description "Something is not working" --force
+          gh label create "help wanted" --color 008672 --description "Extra attention is needed" --force
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
+      - name: Add bug label when issue mentions a bug
+        if: contains(github.event.issue.title, 'bug') || contains(github.event.issue.body, 'bug')
+        run: gh issue edit "$ISSUE_NUMBER" --add-label bug
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+      - name: Add help wanted label when issue asks for help
+        if: contains(github.event.issue.title, 'help') || contains(github.event.issue.body, 'help')
+        run: gh issue edit "$ISSUE_NUMBER" --add-label "help wanted"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+      - name: Comment on new issues
+        if: github.event.action == 'opened'
+        run: gh issue comment "$ISSUE_NUMBER" --body "Thanks for opening this issue. A maintainer will review it soon."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}

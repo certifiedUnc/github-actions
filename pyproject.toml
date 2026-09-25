@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "github-actions-python-calculator"
+version = "0.1.0"
+description = "A tiny Python project used to learn GitHub Actions."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "GitHub Actions Tutorial" }]
+
+[tool.setuptools]
+py-modules = ["calculator"]
