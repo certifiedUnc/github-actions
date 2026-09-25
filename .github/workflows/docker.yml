@@ -45,6 +45,7 @@ jobs:
 
       - name: Build and publish image
         run: |
+          IMAGE_NAME="${IMAGE_NAME,,}"
           docker build --tag "$IMAGE_NAME:${{ github.sha }}" --tag "$IMAGE_NAME:latest" .
           docker push "$IMAGE_NAME:${{ github.sha }}"
           docker push "$IMAGE_NAME:latest"
