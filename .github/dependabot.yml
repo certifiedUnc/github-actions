@@ -1,6 +1,16 @@
-version: 2 updates:
 
-Update Python dependencies
-package-ecosystem: "pip" directory: "/" schedule: interval: "weekly" open-pull-requests-limit: 5
-Update GitHub Actions versions
-package-ecosystem: "github-actions" directory: "/" schedule: interval: "weekly" open-pull-requests-limit: 5
+version: 2
+updates:
+  # Update Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Update GitHub Actions versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
