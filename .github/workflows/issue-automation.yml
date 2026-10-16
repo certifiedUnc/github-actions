@@ -8,10 +8,15 @@ permissions:
   issues: write
   contents: read
 
+concurrency:
+  group: issue-triage-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
 jobs:
   triage:
     name: Add labels and welcome comment
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Ensure tutorial labels exist
@@ -45,3 +50,28 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+      - name: Suggest an exact-title duplicate
+        if: github.event.action == 'opened'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          matches=$(gh issue list --state open --limit 100 --json number,title,url --search "\"$ISSUE_TITLE\" in:title")
+          duplicate=$(jq -r --argjson current "$ISSUE_NUMBER" --arg title "$ISSUE_TITLE" \
+            '[.[] | select(.number != $current and (.title | ascii_downcase) == ($title | ascii_downcase))][0].url // empty' \
+            <<< "$matches")
+          if [[ -n "$duplicate" ]]; then
+            gh issue comment "$ISSUE_NUMBER" --body "This issue has the same title as an existing open issue: $duplicate. Please check whether it is related; this is only an automated suggestion."
+          fi
+
+      - name: Assign configured issue triager
+        if: github.event.action == 'opened' && vars.ISSUE_TRIAGE_ASSIGNEE != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TRIAGE_ASSIGNEE: ${{ vars.ISSUE_TRIAGE_ASSIGNEE }}
+        run: gh issue edit "$ISSUE_NUMBER" --add-assignee "$ISSUE_TRIAGE_ASSIGNEE"
