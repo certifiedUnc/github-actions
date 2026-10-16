@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Mark and close stale issues and pull requests
-        uses: actions/stale@v9
+        uses: actions/stale@v11
         with:
           days-before-stale: 30
           days-before-close: 7
